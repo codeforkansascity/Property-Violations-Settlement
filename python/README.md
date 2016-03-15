@@ -1,1 +1,1 @@
-# Place python code (especially Jupyter notebooks) here.
+# Place python code (including Jupyter notebooks) here.
