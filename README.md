@@ -9,6 +9,9 @@ This repo was created from http://hackshop.waffle.io. Use [the Waffle board](htt
 2. We highly recommend that you also download and install [R Stuidio](https://www.rstudio.com/products/rstudio/)
 3. Follow [this](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN) guide to set up github to work with RStudio. 
 
+#Timeframe for data analysis
+When performing analysis please use data from January 2009 to January 2015. 
+
 ##Add your name to the List of Names Test Script.R
 1) Fork this repo  
 2) Create a new project in RStudio from [version control](http://i0.wp.com/www.datasurg.net/wp-content/uploads/2015/07/7_new_project.jpg?zoom=2&resize=456%2C328) and pull in your repo  
