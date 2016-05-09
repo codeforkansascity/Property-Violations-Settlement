@@ -1,6 +1,3 @@
-# Reads the geocoded address file
-#    includeOnlyKeyAndGeoid - if true, return only the KIVA.PIN and GEO_ID columns;
-#       otherwise, return all columns in the file
 readAddresses <- function( includeOnlyKeyAndGeoid = TRUE ) {
   # Reads the geocoded address file
   #
@@ -62,6 +59,9 @@ addBlockGroupToViolations <- function(d) {
   #
   #  Args:
   #    d: A violations data frame
+  #
+  #  Returns:
+  #    A modified violations data frame
   #
   # Note:    
   #    GEOID is a geographic identifier describing the area to which census data applies.
