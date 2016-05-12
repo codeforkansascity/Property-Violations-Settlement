@@ -15,7 +15,7 @@ fetchCensusData <- function(tableNumber, geo = getKcGeo()) {
   #
   #  Args:
   #    tableNumber: The "number" (actually alphanumeric) of the census table to fetch
-  #    geo : The geographical area for which to obtain data (defaults to getKcGeo())
+  #    geo: The geographical area for which to obtain data (defaults to getKcGeo())
   #
   #  Returns:
   #    The acs object containing the data for the table number within the provided
@@ -39,11 +39,10 @@ convertToBlockGroupDataFrame <- function(acsData) {
   # The data is assumed to be at the block group level.
   #
   #  Args:
-  #    tableNumber: The "number" (actually alphanumeric) of the census table to fetch
-  #    geo : The geographical area for which to obtain data (defaults to getKcGeo())
+  #    acsData: An 'acs-class' object returned by a fetch using the acs package
   #
   #  Returns:
-  #    A data frame with a "BG.GEOID" column and all estimates in the supplied data frame.
+  #    A data frame with a "GEOID" column and all estimates in the supplied data frame.
   
   d <- data.frame(paste0(str_pad(acsData@geography$state, 2, "left", pad="0"),
                     str_pad(acsData@geography$county, 3, "left", pad="0"),
@@ -51,7 +50,7 @@ convertToBlockGroupDataFrame <- function(acsData) {
                     str_pad(acsData@geography$blockgroup, 1, "left", pad="0")),
              acsData@estimate[,],
              stringsAsFactors = FALSE)
-  names(d)[1] <- "BG.GEOID"
+  names(d) <- c("GEOID",acsData@acs.colnames)
   d
 }
 
@@ -69,16 +68,34 @@ lookupCensusTable <- function(nameSearch) {
   View(l@results)
 }
 
-getCensusTableAsDataframe <- function(tableNumber, geo) {
+getCensusTableAsDataframe <- function(tableNumber, geo = getKcGeo()) {
   # Both fetches census data and converts the estimates into a data frame.
   # Assumes data at the block group level.
   #
   #  Args:
-  #    d: An acs object returned by a fetch using the acs package
+  #    tableNumber: The "number" (actually alphanumeric) of the census table to fetch
+  #    geo: The geographical area for which to obtain data (defaults to getKcGeo())
   #
   #  Returns:
-  #    A vector of acs estimate columns
+  #    A data frame with the data from the requested census table
   
   t <- fetchCensusData(tableNumber, geo) 
   convertToBlockGroupDataFrame(t)
+}
+
+joinWithCensusData <- function(d, tableNumber, geo = getKcGeo()) {
+  # Fetches census data, converts the estimates into a data frame and joins them to the provided
+  # violations data frame on 'GEOID'.
+  #
+  # Assumes data at the block group level.
+  #
+  #  Args:
+  #    d: A violations data frame
+  #    tableNumber: The "number" (actually alphanumeric) of the census table to fetch
+  #    geo: The geographical area for which to obtain data (defaults to getKcGeo())
+  #
+  #  Returns:
+  #    A violations data frame with the columns from the requested census table added
+  
+  left_join(d, getCensusTableAsDataframe(tableNumber, geo), by = "GEOID")
 }

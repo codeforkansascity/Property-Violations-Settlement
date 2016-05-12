@@ -18,6 +18,7 @@ source('R/violations_general.R', echo=FALSE)
 source('R/geocoded_addresses.R', echo=FALSE)
 source('R/block_group.R', echo=FALSE)
 source('R/census.R', echo=FALSE)
+source('R/alteryx.R', echo=FALSE)
 ### load utility scripts ###
 source('R/addresses.R', echo=FALSE)
 source('R/leaflet_example.R', echo=FALSE)
@@ -44,3 +45,14 @@ violations <- rawViolations %>%
 
 # reshape the violations data to join with census data
 violationsByCensusArea <- violations %>% blockGroupSummarize()
+
+# bind with census data from Alteryx
+violationsWithAlteryxCensusData <- addCensusDataFromAlteryx(violationsByCensusArea)
+
+# bind with census data from the acs package
+violationsWithAcsPkgCensusData <- violationsByCensusArea %>% 
+  joinWithCensusData("B01003") %>% 
+  joinWithCensusData("B15003") %>% 
+  joinWithCensusData("B01002") %>% 
+  joinWithCensusData("B19013") %>% 
+  joinWithCensusData("B25071")
