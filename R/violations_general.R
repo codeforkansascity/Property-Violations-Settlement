@@ -52,6 +52,8 @@ extractViolationCoordinates <- function(d) {
   rm(regCoordinates)
   rm(coordinates)
   
+  head(d$Latitude)
+  
   d
 }
 
@@ -118,4 +120,24 @@ scrubBadData <- function(d) {
   errors <- nrow(d %>% filter(Case.ID == 0))
   print(sprintf("Scrubbing %d rows with 0s in Case.ID", errors))
   d <- d %>% filter(Case.ID != 0)
+}
+
+addTotalViolationsForCaseColumn <- function(d) {
+  # Adds a column to the violations data frame providing a count of total
+  # violations in the case of which the violation is a part
+  #
+  #  Args:
+  #    d: A violations data frame
+  #    useKivaPin: if TRUE, uses the KIVA PIN to represent the address. 
+  #       Defaults to FALSE.
+  #
+  #  Returns:
+  #    A modified violations data frame
+  
+  e <- d %>% 
+    group_by(Case.ID) %>% 
+    summarize(Violation.Count = n()) %>% 
+    ungroup()
+  
+  left_join(d, e, by = 'Case.ID' )  
 }
