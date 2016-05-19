@@ -1,0 +1,39 @@
+library(MASS)
+#install.packages("ISLR")
+library(ISLR)
+#install.packages("psych")
+library(psych)
+library(car)
+
+violations <- read.csv("C:\\Users\\dwanc_000\\Documents\\aRockhurst\\Project - Property Violations\\PropViolations with census data.csv")
+
+head(violations) #data basics
+dim(violations) #data basics
+names(violations) #data basics
+attach(violations)
+str(violations)
+hist(medianHHIncome) #histogram
+hist(rentAsPercIncome)
+# ran next few lines of code to check data, but commented out for final, caused issues downstream...
+violations <- table("medianHHIncome","rentAsPercIncome","medianAge","Violation.Code") #frequence tables
+margin.table(violations,1)
+margin.table(violations,2)
+margin.table(violations,3)
+margin.table(violations,4)
+
+str(violations)
+
+cor(violations[c("medianHHIncome","rentAsPercIncome","medianAge","Violation.Code")]) #correlation
+pairs(violations[c("medianHHIncome","rentAsPercIncome","medianAge","Violation.Code")])
+pairs.panels(violations[c("medianHHIncome","rentAsPercIncome","medianAge","Violation.Code")])
+
+# summarize the charges variable
+summary(Violation.Code)
+
+#scatterplots (try several x and y variations)
+plot(medianHHIncome, Violation.Code, main="Scatterplot Example", xlab="Mediam HH Income", ylab="Violation Code")
+
+
+#model 1 of all variables modedled to charges (explicit)
+lm.ins_model<-lm(Violation.Code ~ medianHHIncome + rentAsPercIncome + medianAge + highschoolEducation, data=violations) #builds MLR with ALL variables
+summary(lm.ins_model) #summarize MLRM
