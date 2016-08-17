@@ -1,0 +1,35 @@
+# This is your sidebar TOC. The sidebar code loops through sections here and provides the appropriate formatting.
+
+entries:
+- title: sidebar
+  product: Overview
+  folders:
+
+  - title: Introduction
+    output: web, pdf
+    folderitems:
+
+    - title: Home
+      url: /index.html
+      output: web, pdf
+
+    - title: Related Resources
+      url: /related-resources
+      output: web, pdf
+
+
+  - title: Code Violations Data
+    output: web, pdf
+    folderitems:
+
+    - title: Finding the Data
+      url: /finding-the-data
+      output: web, pdf
+
+    - title: Data Structure
+      url: /data-structure
+      output: web, pdf
+
+    - title: Violation Types
+      url: /violation-types
+      output: web, pdf
