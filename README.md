@@ -1,3 +1,3 @@
-## Jekyll Documentation theme
+## Github Pages
 
-Build the site to see the instructions for using it. Or just go here: [http://idratherbewriting.com/documentation-theme-jekyll/](http://idratherbewriting.com/documentation-theme-jekyll/)
+Contains the static content for the Github Pages site associated with the project.
