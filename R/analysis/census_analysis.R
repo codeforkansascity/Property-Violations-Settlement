@@ -17,15 +17,17 @@ violationsByCensusArea <- violationsByCensusArea  %>%
 violationsByCensusArea <- left_join(violationsByCensusArea, violationsByAddressAndCensusArea, by = "GEOID")
 
 # bind with census data from the acs package
-violationsWithAcsPkgCensusData <- violationsByCensusArea %>% 
+violAndCensus <- violationsByCensusArea %>% 
   joinWithCensusData("B01003", getKcGeoTract()) %>% 
   joinWithCensusData("B15003", getKcGeoTract()) %>% 
   joinWithCensusData("B01002", getKcGeoTract()) %>% 
   joinWithCensusData("B19013", getKcGeoTract()) %>% 
-  joinWithCensusData("B25071", getKcGeoTract())
+  joinWithCensusData("B25071", getKcGeoTract()) %>% 
+  joinWithCensusData("B11001", getKcGeoTract())
 
 # scrub tracts with no population
-violationsWithAcsPkgCensusData <- filter(violationsWithAcsPkgCensusData, violationsWithAcsPkgCensusData[,'Total Population: Total'] > 0)
+violAndCensus <- filter(violAndCensus, violAndCensus[,'Total Population: Total'] > 0)
+
 
 educationColumns <- c('Education.Population',
                       'Education.None', 
@@ -54,7 +56,7 @@ educationColumns <- c('Education.Population',
                       'Education.PhD')
 
 # convert the raw education category numbers into percentages
-edNumbers <- select(violationsWithAcsPkgCensusData, 7:31)
+edNumbers <- select(violAndCensus, 7:31)
 names(edNumbers) <- educationColumns
 edNumbers$Education.No.Diploma <- rowSums(edNumbers[,3:16])
 edNumbers$Education.Diploma.GED <- rowSums(edNumbers[,17:18])
@@ -70,10 +72,27 @@ edNumbers <- select(edNumbers,
                     Education.Grad.Degree)
 
 edPercents <- lapply(select(edNumbers, 2:7), function(x, y) if(y > 0) { x/y } else 0, y = select(edNumbers, 1))
-violationsWithAcsPkgCensusData <- select(violationsWithAcsPkgCensusData, -(7:31)) 
+violAndCensus <- select(violAndCensus, -(7:31)) 
 edPercents <- as.data.frame(edPercents)
 edPercents <- round(100 * edPercents, digits = 2)
 names(edPercents) <- names(edNumbers[2:7])
-violationsWithAcsPkgCensusData <- bind_cols(violationsWithAcsPkgCensusData, edPercents)
-write.csv(violationsWithAcsPkgCensusData, 'output/violationsAndCensus.csv', row.names = FALSE)
+violAndCensus <- bind_cols(violAndCensus, edPercents)
 
+names(violAndCensus)[6:11] <- c('Total.Population',
+                                                 'Median.Age.Total',
+                                                 'Median.Age.Male',
+                                                 'Median.Age.Female',
+                                                 'Median.Income',
+                                                 'Median.Rent.Percent')
+
+names(violAndCensus)[12:20] <- c('Total.Households',
+                                 'Family',
+                                 'Family.Married.Couple',
+                                 'Family.Other',
+                                 'Family.Other.Male.No.Wife',
+                                 'Family.Other.Female.No.Husband',
+                                 'NonFamily',
+                                 'NonFamily.Living.Alone',
+                                 'NonFamily.Not.Alone')
+
+write.csv(violAndCensus, 'output/violationsAndCensus.csv', row.names = FALSE)
