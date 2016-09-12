@@ -34,6 +34,16 @@ getKcGeo <- function() {
   geo.make(state="MO", county=c("Cass", "Clay", "Jackson", "Platte"), tract="*", block.group="*")  
 }
 
+getKcGeoTract <- function() {
+  # Gets a geographical definition that includes, but is broader than, Kansas City. It includes
+  # all tracts and block groups in Cass, Clay, Jackson and Platte counties.
+  #
+  #  Returns:
+  #    A definition of the geographical area including KC that can be used in census data retrievals.
+  
+  geo.make(state="MO", county=c("Cass", "Clay", "Jackson", "Platte"), tract="*")  
+}
+
 convertToBlockGroupDataFrame <- function(acsData) {
   # Converts the estimates in an acs object returned by fetching census data into a data frame.
   # The data is assumed to be at the block group level.
@@ -54,6 +64,25 @@ convertToBlockGroupDataFrame <- function(acsData) {
   d
 }
 
+convertToTractDataFrame <- function(acsData) {
+  # Converts the estimates in an acs object returned by fetching census data into a data frame.
+  # The data is assumed to be at the tract level.
+  #
+  #  Args:
+  #    acsData: An 'acs-class' object returned by a fetch using the acs package
+  #
+  #  Returns:
+  #    A data frame with a "GEOID" column and all estimates in the supplied data frame.
+  
+  d <- data.frame(paste0(str_pad(acsData@geography$state, 2, "left", pad="0"),
+                         str_pad(acsData@geography$county, 3, "left", pad="0"),
+                         str_pad(acsData@geography$tract, 6, "left", pad="0")),
+                  acsData@estimate[,],
+                  stringsAsFactors = FALSE)
+  names(d) <- c("GEOID",acsData@acs.colnames)
+  d
+}
+
 lookupCensusTable <- function(nameSearch) {
   # Looks up census tables based on the supplied search and displays the results in an RStudio
   # View.
@@ -68,7 +97,7 @@ lookupCensusTable <- function(nameSearch) {
   View(l@results)
 }
 
-getCensusTableAsDataframe <- function(tableNumber, geo = getKcGeo()) {
+getCensusTableAsBlockGroupDataframe <- function(tableNumber, geo = getKcGeo()) {
   # Both fetches census data and converts the estimates into a data frame.
   # Assumes data at the block group level.
   #
@@ -83,7 +112,23 @@ getCensusTableAsDataframe <- function(tableNumber, geo = getKcGeo()) {
   convertToBlockGroupDataFrame(t)
 }
 
-joinWithCensusData <- function(d, tableNumber, geo = getKcGeo()) {
+getCensusTableAsTractDataframe <- function(tableNumber, geo = getKcGeo()) {
+  # Both fetches census data and converts the estimates into a data frame.
+  # Assumes data at the tract level.
+  #
+  #  Args:
+  #    tableNumber: The "number" (actually alphanumeric) of the census table to fetch
+  #    geo: The geographical area for which to obtain data (defaults to getKcGeo())
+  #
+  #  Returns:
+  #    A data frame with the data from the requested census table
+  
+  t <- fetchCensusData(tableNumber, geo) 
+  convertToTractDataFrame(t)
+}
+
+
+joinWithCensusData <- function(d, tableNumber, geo = getKcGeoTract(), level = 'tract') {
   # Fetches census data, converts the estimates into a data frame and joins them to the provided
   # violations data frame on 'GEOID'.
   #
@@ -96,6 +141,12 @@ joinWithCensusData <- function(d, tableNumber, geo = getKcGeo()) {
   #
   #  Returns:
   #    A violations data frame with the columns from the requested census table added
+
+  print(sprintf('Joining with census data from %s', tableNumber))
   
-  left_join(d, getCensusTableAsDataframe(tableNumber, geo), by = "GEOID")
+  if(level == 'tract') {
+    left_join(d, getCensusTableAsTractDataframe(tableNumber, geo), by = "GEOID")
+  } else {
+    left_join(d, getCensusTableAsBlockGroupDataframe(tableNumber, geo), by = "GEOID")
+  }
 }

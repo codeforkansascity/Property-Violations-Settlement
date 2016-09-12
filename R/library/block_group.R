@@ -1,4 +1,4 @@
-blockGroupSummarize <- function(d) {
+summarizeByGeoid <- function(d) {
   # Summarize the data by block group (described by the GEOID column)
   #
   #  Args:
@@ -25,4 +25,16 @@ removeRowsWithoutBlockGroups <- function(d) {
   print(sprintf("Scrubbing %d rows without GEOIDs", nrow(filter(d, is.na(GEOID)))))
   d %>% 
     filter(!is.na(GEOID))
+}
+
+convertToTracts <- function(d) {
+  # Modifies the GEOID to remove the block group id.
+  #
+  #  Args:
+  #    d: A violations data frame including a GEOID with block group
+  # 
+  #  Returns:
+  #    A modified violations data frame
+  d$GEOID <- substr(d$GEOID, 1, 11)
+  d
 }

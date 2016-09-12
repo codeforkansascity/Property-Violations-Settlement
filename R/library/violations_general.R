@@ -69,6 +69,7 @@ addOrdinanceTitles <- function(d) {
   # read KC Ordinance Titles
   ordinanceTitles <- read.csv("data/ordinanceTitles.csv", stringsAsFactors = FALSE)
   d <- d %>%
+    cleanOrdinanceNumber() %>% 
     left_join(ordinanceTitles, by = 'Ordinance.Number')
   
   # clean up by removing the temporary dataset

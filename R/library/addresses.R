@@ -42,6 +42,32 @@ summarizeByAddress <- function(d) {
     ungroup()
 }
 
+summarizeByAddressWithPropertyViolationRatio <- function(d) {
+  # Groups and summarizes the violations data by address and chapter.
+  # Also computes a property violatio ratio, representing the ratio of 
+  # property violations at the address to total violations.
+  #
+  #  Args:
+  #    d: A violations data frame
+  #
+  #  Returns:
+  #    A data frame centered on address, rather than individual violations
+  #    KIVA.PIN | Address.Violation.Count | Property.Violation.Ratio | GEOID 
+  
+  mean_days_open <- d %>% 
+    summarizeByAddress()
+  
+  d %>% 
+    byAddressAndChapter() %>% 
+    summarize(Violation.Count = n(), GEOID = first(GEOID) ) %>%
+    spread(Ordinance.Chapter, Violation.Count, fill = 0) %>% 
+    summarize(Address.Violation.Count = sum(`48`) + sum(`56`),
+              Property.Violation.Ratio = sum(`56`) / Address.Violation.Count,
+              GEOID = first(GEOID)) %>% 
+    left_join(select(mean_days_open, KIVA.PIN, Mean.Days.Open), by = "KIVA.PIN") %>% 
+    ungroup()
+}
+
 summarizeByViolationCountPerAddress <- function(d) {
   # Groups and summarizes the violations data by violation count per address.
   #

@@ -16,6 +16,7 @@ showSampleMapUsingLeaflet <- function(d) {
   library(rgeos)
   library(maptools)
   library(RColorBrewer)
+  library(stringr)
   
   openAddressses <- d %>%
     extractViolationCoordinates() %>% 

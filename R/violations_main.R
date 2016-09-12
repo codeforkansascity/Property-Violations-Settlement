@@ -13,18 +13,17 @@ options(stringsAsFactors = FALSE)                # change the default for string
 violationsPath <- "output/violations_data.rdf"   # the path where the processed violation data is stored
 geoAddPath <- "output/geo_addresses.rdf"         # location of the geocoded address file in R data format
 
-### load main scripts ###
-source('R/violations_general.R', echo=FALSE)
-source('R/geocoded_addresses.R', echo=FALSE)
-source('R/block_group.R', echo=FALSE)
-source('R/census.R', echo=FALSE)
-source('R/alteryx.R', echo=FALSE)
-### load utility scripts ###
-source('R/addresses.R', echo=FALSE)
-source('R/leaflet_example.R', echo=FALSE)
-source('R/open_addresses.R', echo=FALSE)
-source('R/ordinance_chapters.R', echo=FALSE)
-source('R/ordinance_titles.R', echo=FALSE)
+### load library scripts containing utility functions ###
+source('R/library/violations_general.R', echo=FALSE)
+source('R/library/geocoded_addresses.R', echo=FALSE)
+source('R/library/block_group.R', echo=FALSE)
+source('R/library/census.R', echo=FALSE)
+source('R/library/alteryx.R', echo=FALSE)
+source('R/library/addresses.R', echo=FALSE)
+source('R/library/leaflet_example.R', echo=FALSE)
+source('R/library/open_addresses.R', echo=FALSE)
+source('R/library/ordinance_chapters.R', echo=FALSE)
+source('R/library/ordinance_titles.R', echo=FALSE)
 
 ### process the data ###
 
@@ -39,20 +38,5 @@ if(file.exists(violationsPath)) {
 # prepare violations data - scrub bad data, filter, add more columns
 violations <- rawViolations %>% 
   convertViolationDates() %>% 
-  scrubBadData() %>% 
-  addBlockGroupToViolations() %>% 
-  removeRowsWithoutBlockGroups() # TODO: potentially remove if data is fixed
-
-# reshape the violations data to join with census data
-violationsByCensusArea <- violations %>% blockGroupSummarize()
-
-# bind with census data from Alteryx
-violationsWithAlteryxCensusData <- addCensusDataFromAlteryx(violationsByCensusArea)
-
-# bind with census data from the acs package
-violationsWithAcsPkgCensusData <- violationsByCensusArea %>% 
-  joinWithCensusData("B01003") %>% 
-  joinWithCensusData("B15003") %>% 
-  joinWithCensusData("B01002") %>% 
-  joinWithCensusData("B19013") %>% 
-  joinWithCensusData("B25071")
+  topChapters() %>% 
+  scrubBadData()
