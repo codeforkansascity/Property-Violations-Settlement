@@ -27,3 +27,11 @@ The project features some easy-to-use functions for finding and joining census d
 5. To fetch census data, you have to define the geography you’re interested in. The helper function getKcGeo() returns a nice geographic definition that includes all the blockgroups in the counties that contain KC.
 6. To see the KC metro area data for a table you think might be interesting, use the getCensusTableAsDataframe(‘your table number here’) function.
 7. To join any census data to our violations data, just use the joinWithCensusData() function. Example: joinWithCensusData( violationsByCensusArea, “B01003”). See 'R/analysis/census_analysis.R' for some examples.
+
+#Preparing to Contribute - Add your name to the List of Names Test Script.R
+1) Fork this repo  
+2) Create a new project in RStudio from [version control](http://i0.wp.com/www.datasurg.net/wp-content/uploads/2015/07/7_new_project.jpg?zoom=2&resize=456%2C328) and pull in your repo  
+3) Add your name to the "List of Names Test Script"  
+4) Commit your changes  
+5) Push your changes up to Github  
+6) Issue a pull request to merge your updates with the master (base) 
