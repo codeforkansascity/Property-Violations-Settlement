@@ -29,8 +29,10 @@ source('R/library/ordinance_titles.R', echo=FALSE)
 
 # load the violations data from the rdf file if we have it, otherwise from the open data site
 if(file.exists(violationsPath)) {
+  print('loading cached local copy of violation data')
   load(violationsPath)
 } else {
+  print('loading latest violations data from Socrata')
   rawViolations <- read.socrata("https://data.kcmo.org/Housing/Property-Violations/nhtf-e75a")  
   save(rawViolations, file = violationsPath)
 }
