@@ -12,7 +12,7 @@ The [project website](http://codeforkc.org/Property-Violations-Settlement/) serv
 1. You will need to download and install [R](https://www.r-project.org/)
 2. We highly recommend that you also download and install [R Stuidio](https://www.rstudio.com/products/rstudio/)
 3. Follow [this](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN) guide to set up github to work with RStudio. 
-4. Check out the [Getting Started video](https://www.youtube.com/watch?v=xVjcfoTJBIM) that introduces the project and describes the startup script (violaions_main.R). Make sure you have all installed all the libraries that are loaded at the top of violations_main.R before trying to run the script.
+4. Check out the [Getting Started video](https://www.youtube.com/watch?v=xVjcfoTJBIM) that introduces the project and describes the startup script (violaions_main.R). The R directory has changed a little since that video was recorded, but the central thrust of the video is still relevant. Make sure you have all installed all the libraries that are loaded at the top of violations_main.R before trying to run the script yourself.
 
 #Project Structure
 The purpose of each directory is described in a readme file in the directory. The R directory specifically includes two subdirectories: library and analysis. The library directory contains utility scripts that define functions for working with violations data. The analysis directory contains scripts that attempt to use those functions and embedded code to analyze the violations data.
